@@ -1,0 +1,28 @@
+# ─── Core deep-learning stack ──────────────────────────────────────────────
+torch==2.7.0             # CPU wheel; grab a +cu11x / +rocm wheel if you have a GPU
+torchvision==0.22.0      # Matches Torch 2.7 ABI
+
+# ─── Detection & tracking ─────────────────────────────────────────────────
+ultralytics==8.3.115      # YOLO v8+ training / inference toolkit
+deep-sort-realtime>=1.4   # MOT tracker; loose pin to stay compatible
+
+# ─── Vision utilities & augmentations ─────────────────────────────────────
+opencv-python>=4.10.0     # Computer-vision I/O and basic ops
+albumentations>=1.4.4     # Fast, declarative image transforms
+pycocotools>=2.0.8        # COCO mAP metrics, annotation helpers
+
+# ─── Data science & numerics ──────────────────────────────────────────────
+numpy>=1.26.4
+pandas>=2.2.2
+scikit-image>=0.23.2
+scikit-learn>=1.5.0
+tqdm>=4.66.2              # Neat progress bars
+
+# ─── Visualization / logging ──────────────────────────────────────────────
+matplotlib>=3.9.0
+seaborn>=0.13.2
+rich>=13.7.0
+
+# ─── Misc helpers ─────────────────────────────────────────────────────────
+pillow>=11.0.0
+pyyaml>=6.0.1
