@@ -49,7 +49,7 @@ Our mission is to **detect in real‑time any rider (or pillion) missing a helme
 
 ---
 
-## 5  Getting Started
+## 5  Getting Started - How to contribute
 
 ```bash
 # 1 Clone the repo
