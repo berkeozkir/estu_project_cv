@@ -49,7 +49,7 @@ Our mission is to **detect any rider (or pillion) missing a helmet in traffic‑
 
 ---
 
-## 5  Getting Started - How to contribute
+## 5  Getting Started
 
 ```bash
 # 1 Clone the repo
@@ -61,7 +61,13 @@ python -m venv .venv && source .venv/bin/activate
 
 # 3 Install requirements
 pip install -r requirements.txt
+
 ```
+
+## Obtaining Dataset
+
+Download this dataset: https://drive.google.com/file/d/1GZj6l84L5OD_ClQlh3uw17glbyPVmxhg/view
+Extract the zip and rename the folder as "data" **!!Important**
 
 > **Note:** Large datasets and checkpoint files go in `data/` and are tracked with **Git LFS**
 
