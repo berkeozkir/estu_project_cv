@@ -37,7 +37,6 @@ Our mission is to **detect any rider (or pillion) missing a helmet in traffic‑
 
 ```
 ├── data/               # raw & processed datasets (git‑ignored)
-├── notebooks/          # exploratory EDA & experiments
 ├── src/
 │   ├── datamodules/    # dataset + augmentations
 │   ├── models/         # detection & classification nets
