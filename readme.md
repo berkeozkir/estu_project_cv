@@ -52,7 +52,7 @@ Our mission is to **detect any rider (or pillion) missing a helmet in traffic‑
 ```bash
 # 1 Clone the repo
 git clone https://github.com/berkeozkir/estu_project_cv.git
-cd <repo>
+cd estu_project_cv
 
 # 2 Create & activate a virtual env
 python -m venv .venv && source .venv/bin/activate
