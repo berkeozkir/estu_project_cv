@@ -70,6 +70,12 @@ Extract the zip and rename the folder as "data"
 
 > **Note:** Large datasets and checkpoint files go in `data/` and are tracked with **Git LFS**
 
+
+## Exploratory Data Analysis
+
+To visualize dataset and ground truth labels with classes and run simple YOLO inference please run the following python script
+```python src/video_ground_truth_visualizer.py```
+
 ---
 
 ## 6  License
