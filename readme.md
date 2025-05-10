@@ -66,8 +66,8 @@ pip install -r requirements.txt
 
 ## Obtaining Dataset
 
-Download this dataset: https://drive.google.com/file/d/1GZj6l84L5OD_ClQlh3uw17glbyPVmxhg/view
-Extract the zip and rename the folder as "data" **!!Important**
+Download this dataset: https://drive.google.com/file/d/1GZj6l84L5OD_ClQlh3uw17glbyPVmxhg/view  <br/>
+Extract the zip and rename the folder as "data"
 
 > **Note:** Large datasets and checkpoint files go in `data/` and are tracked with **Git LFS**
 
