@@ -38,14 +38,14 @@ Our mission is to **detect any rider (or pillion) missing a helmet in traffic‑
 ```
 ├── data/               # raw & processed datasets (git‑ignored)
 ├── src/
-│   ├── datamodules/    # dataset + augmentations
-│   ├── models/         # detection & classification nets
-│   ├── utils/          # helpers (visualisation, metrics, etc.)
-│   └── inference.py    # entry‑point for demo
+│   ├── datamodules/    # dataset + augmentations          (TBD)
+│   ├── models/         # detection & classification nets  (TBD)
+│   └── inference.py    # entry‑point for demo             (TBD)
+│   └── gt_viz.py       # Video ground_truth visualizer
 ├── requirements.txt    # to be filled iteratively
 └── README.md
 ```
-
+(TBD) : To be determined
 ---
 
 ## 5  Getting Started
