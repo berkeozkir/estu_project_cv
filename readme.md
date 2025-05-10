@@ -10,7 +10,7 @@
 ## 1  Problem Statement
 
 Motorcyclists riding without helmets face a sharply higher risk of fatal injury.
-Our mission is to **detect in real‑time any rider (or pillion) missing a helmet in traffic‑camera footage**, enabling authorities to enforce safety regulations and ultimately reduce crash‑related deaths.
+Our mission is to **detect any rider (or pillion) missing a helmet in traffic‑camera footage**, enabling authorities to enforce safety regulations and ultimately reduce crash‑related deaths.
 
 ---
 
@@ -29,7 +29,7 @@ Our mission is to **detect in real‑time any rider (or pillion) missing a helme
 1. **Data Pipeline** – curate or annotate a balanced dataset (helmet / no‑helmet) and implement robust data loaders & augmentations.
 2. **Modeling** – establish a baseline detector (e.g. **YOLOv8** or **EfficientDet**) and iterate with multi‑task heads or attribute classifiers.
 3. **Evaluation** – track *mAP\@0.5*, precision/recall and false‑positive rate per frame, stressing edge cases (night, occlusion, rain).
-4. **Deployment Demo** – build a real‑time inference script/notebook and an optional ONNX/TensorRT engine for edge devices.
+4. **Deployment Demo** – build a inference script/notebook and an optional ONNX/TensorRT engine for edge devices.
 
 ---
 
@@ -42,7 +42,7 @@ Our mission is to **detect in real‑time any rider (or pillion) missing a helme
 │   ├── datamodules/    # dataset + augmentations
 │   ├── models/         # detection & classification nets
 │   ├── utils/          # helpers (visualisation, metrics, etc.)
-│   └── inference.py    # entry‑point for real‑time demo
+│   └── inference.py    # entry‑point for demo
 ├── requirements.txt    # to be filled iteratively
 └── README.md
 ```
