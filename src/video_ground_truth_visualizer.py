@@ -10,6 +10,16 @@ from collections import defaultdict
 from ultralytics import YOLO
 import threading
 
+# Get the directory where the script is located
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Global path prefix relative to script location
+DATA_PREFIX = os.path.join(os.path.dirname(SCRIPT_DIR), "data")
+YOLO_DIR = os.path.join(DATA_PREFIX, "yolo")
+
+# Create necessary directories if they don't exist
+os.makedirs(YOLO_DIR, exist_ok=True)
+
 class VideoGroundTruthVisualizer:
     def __init__(self, root):
         self.root = root
@@ -36,11 +46,11 @@ class VideoGroundTruthVisualizer:
         self.show_yolo = True
         self.show_gt = True
         self.available_models = {
-            "YOLOv8n": "yolov8n.pt",
-            "YOLOv8s": "yolov8s.pt",
-            "YOLOv8m": "yolov8m.pt",
-            "YOLOv8l": "yolov8l.pt",
-            "YOLOv8x": "yolov8x.pt"
+            "YOLOv8n": os.path.join(YOLO_DIR, "yolov8n.pt"),
+            "YOLOv8s": os.path.join(YOLO_DIR, "yolov8s.pt"),
+            "YOLOv8m": os.path.join(YOLO_DIR, "yolov8m.pt"),
+            "YOLOv8l": os.path.join(YOLO_DIR, "yolov8l.pt"),
+            "YOLOv8x": os.path.join(YOLO_DIR, "yolov8x.pt")
         }
         self.loading_model = False
         self.model_download_progress = 0
@@ -68,7 +78,7 @@ class VideoGroundTruthVisualizer:
             self.copyright_label = tk.Label(
                 self.root, 
                 text="Developed by Berke Özkır and John Doe © 2024", 
-                font=("Arial", 8),
+                font=("Arial", 12),
                 bg="light gray",
                 fg="black",
                 padx=5,
@@ -87,11 +97,11 @@ class VideoGroundTruthVisualizer:
         try:
             # Load ground truth data
             columns = ['video_id', 'frame', 'bb_left', 'bb_top', 'bb_width', 'bb_height', 'class_id']
-            self.gt_data = pd.read_csv('gt.txt', header=None, names=columns)
+            self.gt_data = pd.read_csv(os.path.join(DATA_PREFIX, 'gt.txt'), header=None, names=columns)
             
             # Load class labels
             self.labels = {}
-            with open('labels.txt', 'r') as f:
+            with open(os.path.join(DATA_PREFIX, 'labels.txt'), 'r') as f:
                 for line in f:
                     parts = line.strip().split(', ')
                     if len(parts) == 2:
@@ -345,7 +355,7 @@ class VideoGroundTruthVisualizer:
         if selected:
             try:
                 video_id = int(selected.split('.')[0])
-                video_path = os.path.join('videos', selected)
+                video_path = os.path.join(DATA_PREFIX, 'videos', selected)
                 if os.path.exists(video_path):
                     self.load_video(video_path, video_id)
                 else:
