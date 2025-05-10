@@ -63,7 +63,7 @@ pip install -r requirements.txt
 
 ```
 
-## Obtaining Dataset
+## 5.1 Obtaining Dataset
 
 Download this dataset: https://drive.google.com/file/d/1GZj6l84L5OD_ClQlh3uw17glbyPVmxhg/view  <br/>
 Extract the zip and rename the folder as "data"
@@ -71,7 +71,7 @@ Extract the zip and rename the folder as "data"
 > **Note:** Large datasets and checkpoint files go in `data/` and are tracked with **Git LFS**
 
 
-## Exploratory Data Analysis
+## 5.2 Exploratory Data Analysis
 
 To visualize dataset and ground truth labels with classes and run simple YOLO inference please run the following python script
 
