@@ -79,7 +79,7 @@ To visualize dataset and ground truth labels with classes and run simple YOLO in
 python src/video_ground_truth_visualizer.py
 ```
 
-![Alt text](assets/exploraGUI.png)
+![Alt text](assets/exploreGUI.png)
 
 ---
 
