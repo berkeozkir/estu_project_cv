@@ -75,7 +75,7 @@ Extract the zip and rename the folder as "data"
 To visualize dataset and ground truth labels with classes and run simple YOLO inference please run the following python script
 
 ```python 
-python src/video_ground_truth_visualizer.py
+python src/gt_viz.py
 ```
 
 ![Alt text](assets/exploreGUI.png)
