@@ -4,7 +4,6 @@ torchvision==0.22.0      # Matches Torch 2.7 ABI
 
 # ─── Detection & tracking ─────────────────────────────────────────────────
 ultralytics==8.3.115      # YOLO v8+ training / inference toolkit
-deep-sort-realtime>=1.4   # MOT tracker; loose pin to stay compatible
 
 # ─── Vision utilities & augmentations ─────────────────────────────────────
 opencv-python>=4.10.0     # Computer-vision I/O and basic ops
