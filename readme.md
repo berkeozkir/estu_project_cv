@@ -44,7 +44,7 @@ Our mission is to **detect any rider (or pillion) missing a helmet in traffic‑
 │   └── gt_viz.py       # Video ground_truth visualizer
 ├── requirements.txt    # to be filled iteratively
 └── README.md
-``` TBD : To be determined
+``` 
 ---
 
 ## 5  Getting Started
