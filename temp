@@ -1,42 +1,35 @@
-#ifndef TYPE_H
-#define TYPE_H
+#include <iostream>
+#include "dtype.h"
 
-#include <stdint.h>
+int main() {
+    // Create and initialize a WORD32_t value
+    WORD32_t data32;
+    data32.dataU32 = 0x12345678; // Set the full 32-bit value
 
-// Define a bit field structure representing 1 byte as 8 individual bits
-typedef struct {
-    uint8_t bit0 : 1;
-    uint8_t bit1 : 1;
-    uint8_t bit2 : 1;
-    uint8_t bit3 : 1;
-    uint8_t bit4 : 1;
-    uint8_t bit5 : 1;
-    uint8_t bit6 : 1;
-    uint8_t bit7 : 1;
-} JBIT_t;
+    // Print the full 32-bit value
+    std::cout << "Full 32-bit value: 0x" << std::hex << data32.dataU32 << std::endl;
 
-// Define a union allowing access to a byte either as bits or a full byte
-typedef union Byte_s {
-    JBIT_t bits;
-    uint8_t dataU8;
-} BYTE_t;
+    // Print 16-bit halves
+    std::cout << "Low 16 bits: 0x" << data32.low16.dataU16 << std::endl;
+    std::cout << "High 16 bits: 0x" << data32.high16.dataU16 << std::endl;
 
-// Define a union allowing access to a 16-bit word as two bytes or a full word
-typedef union WORD16_s {
-    struct {
-        BYTE_t lowByte;
-        BYTE_t highByte;
-    };
-    uint16_t dataU16;
-} WORD16_t;
+    // Print byte-level values
+    std::cout << "Low byte of low16: 0x" << static_cast<int>(data32.low16.lowByte.dataU8) << std::endl;
+    std::cout << "High byte of low16: 0x" << static_cast<int>(data32.low16.highByte.dataU8) << std::endl;
+    std::cout << "Low byte of high16: 0x" << static_cast<int>(data32.high16.lowByte.dataU8) << std::endl;
+    std::cout << "High byte of high16: 0x" << static_cast<int>(data32.high16.highByte.dataU8) << std::endl;
 
-// Define a union allowing access to a 32-bit word as two 16-bit words or a full word
-typedef union WORD32_s {
-    struct {
-        WORD16_t low16;
-        WORD16_t high16;
-    };
-    uint32_t dataU32;
-} WORD32_t;
+    // Show bits of the lowest byte
+    JBIT_t bits = data32.low16.lowByte.bits;
+    std::cout << "Bits of lowest byte: ";
+    std::cout << static_cast<int>(bits.bit7)
+              << static_cast<int>(bits.bit6)
+              << static_cast<int>(bits.bit5)
+              << static_cast<int>(bits.bit4)
+              << static_cast<int>(bits.bit3)
+              << static_cast<int>(bits.bit2)
+              << static_cast<int>(bits.bit1)
+              << static_cast<int>(bits.bit0) << std::endl;
 
-#endif // TYPE_H
+    return 0;
+}
