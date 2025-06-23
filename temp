@@ -1,35 +1,29 @@
-#include <iostream>
+#include <stdio.h>
 #include "dtype.h"
 
 int main() {
     // Create and initialize a WORD32_t value
     WORD32_t data32;
-    data32.dataU32 = 0x12345678; // Set the full 32-bit value
+    data32.dataU32 = 0x12345678; // Set 32-bit value
 
     // Print the full 32-bit value
-    std::cout << "Full 32-bit value: 0x" << std::hex << data32.dataU32 << std::endl;
+    printf("Full 32-bit value: 0x%08X\n", data32.dataU32);
 
     // Print 16-bit halves
-    std::cout << "Low 16 bits: 0x" << data32.low16.dataU16 << std::endl;
-    std::cout << "High 16 bits: 0x" << data32.high16.dataU16 << std::endl;
+    printf("Low 16 bits: 0x%04X\n", data32.low16.dataU16);
+    printf("High 16 bits: 0x%04X\n", data32.high16.dataU16);
 
-    // Print byte-level values
-    std::cout << "Low byte of low16: 0x" << static_cast<int>(data32.low16.lowByte.dataU8) << std::endl;
-    std::cout << "High byte of low16: 0x" << static_cast<int>(data32.low16.highByte.dataU8) << std::endl;
-    std::cout << "Low byte of high16: 0x" << static_cast<int>(data32.high16.lowByte.dataU8) << std::endl;
-    std::cout << "High byte of high16: 0x" << static_cast<int>(data32.high16.highByte.dataU8) << std::endl;
+    // Print bytes
+    printf("Low byte of low16: 0x%02X\n", data32.low16.lowByte.dataU8);
+    printf("High byte of low16: 0x%02X\n", data32.low16.highByte.dataU8);
+    printf("Low byte of high16: 0x%02X\n", data32.high16.lowByte.dataU8);
+    printf("High byte of high16: 0x%02X\n", data32.high16.highByte.dataU8);
 
-    // Show bits of the lowest byte
+    // Print bits of lowest byte
     JBIT_t bits = data32.low16.lowByte.bits;
-    std::cout << "Bits of lowest byte: ";
-    std::cout << static_cast<int>(bits.bit7)
-              << static_cast<int>(bits.bit6)
-              << static_cast<int>(bits.bit5)
-              << static_cast<int>(bits.bit4)
-              << static_cast<int>(bits.bit3)
-              << static_cast<int>(bits.bit2)
-              << static_cast<int>(bits.bit1)
-              << static_cast<int>(bits.bit0) << std::endl;
+    printf("Bits of lowest byte: %d%d%d%d%d%d%d%d\n",
+           bits.bit7, bits.bit6, bits.bit5, bits.bit4,
+           bits.bit3, bits.bit2, bits.bit1, bits.bit0);
 
     return 0;
 }
