@@ -1,54 +1,42 @@
-#!/usr/bin/env python3
-import sys
-from pymavlink import mavutil
+#ifndef TYPE_H
+#define TYPE_H
 
-# 1. Adjust these for your setup:
-SERIAL_PORT = '/dev/ttyUSB0'   # e.g. 'COM3' on Windows or '/dev/ttyS1' on Linux
-BAUD_RATE    = 57600          # match your autopilot / telemetry radio
+#include <stdint.h>
 
-def main():
-    # 2. Open the MAVLink connection over serial
-    master = mavutil.mavlink_connection(SERIAL_PORT, baud=BAUD_RATE)
-    print(f"Listening for MAVLink on {SERIAL_PORT} @ {BAUD_RATE}...")
-    
-    # 3. Wait for the first heartbeat so we know the link is alive
-    master.wait_heartbeat()
-    print(f"Heartbeat from system {master.target_system}, component {master.target_component}\n")
+// Define a bit field structure representing 1 byte as 8 individual bits
+typedef struct {
+    uint8_t bit0 : 1;
+    uint8_t bit1 : 1;
+    uint8_t bit2 : 1;
+    uint8_t bit3 : 1;
+    uint8_t bit4 : 1;
+    uint8_t bit5 : 1;
+    uint8_t bit6 : 1;
+    uint8_t bit7 : 1;
+} JBIT_t;
 
-    while True:
-        # 4. Block until we get a TRAFFIC_REPORT message (ID 246 / name “TRAFFIC_REPORT”)
-        msg = master.recv_match(type='TRAFFIC_REPORT', blocking=True)
-        if not msg:
-            continue
+// Define a union allowing access to a byte either as bits or a full byte
+typedef union Byte_s {
+    JBIT_t bits;
+    uint8_t dataU8;
+} BYTE_t;
 
-        # 5. Decode & scale according to the spec:
-        icao     = msg.ICAO_address                          # uint32
-        lat_deg  = msg.lat     / 1e7                         # int32, degrees * 1e7
-        lon_deg  = msg.lon     / 1e7                         # int32, degrees * 1e7
-        alt_m    = msg.altitude / 1e3                        # int32, meters * 1e3
-        hdg_deg  = msg.heading  / 1e2                        # uint16, degrees * 1e2
-        hvel_ms  = msg.hor_velocity / 1e2                    # uint16, m/s * 1e2
-        vvel_ms  = msg.ver_velocity / 1e2                    # int16, m/s * 1e2
-        flags    = msg.valid_flags                           # bitmask (see spec)
-        squawk   = msg.squawk                                # uint16
-        alt_type = msg.altitude_type                         # uint8 enum
-        callsign = msg.callsign.decode('utf-8', 'ignore').strip('\x00')
-        emitter  = msg.emitter_type                          # uint8 enum
-        tslc     = msg.tslc                                  # uint8 seconds since last comm
+// Define a union allowing access to a 16-bit word as two bytes or a full word
+typedef union WORD16_s {
+    struct {
+        BYTE_t lowByte;
+        BYTE_t highByte;
+    };
+    uint16_t dataU16;
+} WORD16_t;
 
-        # 6. Print out in a human-friendly format:
-        print(f"[TRAFFIC #{icao:08X}] {callsign or 'N/A'}")
-        print(f"  Position : {lat_deg:.6f}°, {lon_deg:.6f}°")
-        print(f"  Altitude : {alt_m:.1f} m  (type {alt_type})")
-        print(f"  Heading  : {hdg_deg:.2f}°")
-        print(f"  Vel H/V  : {hvel_ms:.2f} m/s  /  {vvel_ms:.2f} m/s")
-        print(f"  Squawk   : {squawk:04o}    Flags: 0x{flags:04X}")
-        print(f"  Emitter  : {emitter}    Last seen {tslc} s ago")
-        print("-" * 60)
+// Define a union allowing access to a 32-bit word as two 16-bit words or a full word
+typedef union WORD32_s {
+    struct {
+        WORD16_t low16;
+        WORD16_t high16;
+    };
+    uint32_t dataU32;
+} WORD32_t;
 
-if __name__ == '__main__':
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\nExiting.")
-        sys.exit(0)
+#endif // TYPE_H
