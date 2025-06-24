@@ -1,133 +1,40 @@
-#!/usr/bin/env python3
-import sys
-import time
-import argparse
 from pymavlink import mavutil
-from pymavlink.dialects.v20.common import MAVLink
 
-# 1. Adjust these for your setup:
-SERIAL_PORT = '/dev/ttyUSB0'   # e.g. 'COM3' on Windows or '/dev/ttyS1' on Linux
-BAUD_RATE   = 57600           # match your autopilot / telemetry radio
-TIMEOUT_S   = 5               # seconds to wait for heartbeat
+# === Configuration ===
+PORT = 'COM3'
+BAUD = 57600
 
-def decode_and_print(msg):
-    """Decode fields from a TRAFFIC_REPORT and print nicely."""
-    icao     = msg.ICAO_address
-    lat_deg  = msg.lat     / 1e7
-    lon_deg  = msg.lon     / 1e7
-    alt_m    = msg.altitude / 1e3
-    hdg_deg  = msg.heading  / 1e2
-    hvel_ms  = msg.hor_velocity / 1e2
-    vvel_ms  = msg.ver_velocity / 1e2
-    flags    = msg.valid_flags
-    squawk   = msg.squawk
-    alt_type = msg.altitude_type
-    callsign = msg.callsign.decode('utf-8', 'ignore').strip('\x00') or 'N/A'
-    emitter  = msg.emitter_type
-    tslc     = msg.tslc
+# === Setup MAVLink connection without waiting for HEARTBEAT ===
+print(f"Opening MAVLink on {PORT} at {BAUD} baud...")
+master = mavutil.mavlink_connection(PORT, baud=BAUD)
 
-    print(f"[TRAFFIC #{icao:08X}] {callsign}")
-    print(f"  Position : {lat_deg:.6f}°, {lon_deg:.6f}°")
-    print(f"  Altitude : {alt_m:.1f} m  (type {alt_type})")
-    print(f"  Heading  : {hdg_deg:.2f}°")
-    print(f"  Vel H/V  : {hvel_ms:.2f} m/s  /  {vvel_ms:.2f} m/s")
-    print(f"  Squawk   : {squawk:04o}    Flags: 0x{flags:04X}")
-    print(f"  Emitter  : {emitter}    Last seen {tslc} s ago")
-    print("-" * 60)
+print("Listening for TRAFFIC_REPORT (ID 246)...\nPress Ctrl+C to stop.\n")
 
-def live_mode(args):
-    # open serial with a timeout so recv_match can return None on timeout
-    master = mavutil.mavlink_connection(
-        SERIAL_PORT, baud=BAUD_RATE, timeout=TIMEOUT_S
-    )
-    print(f"Opening {SERIAL_PORT}@{BAUD_RATE}, waiting {TIMEOUT_S}s for HEARTBEAT…")
-    hb = master.recv_match(type='HEARTBEAT', blocking=True)
-    if hb:
-        print(f"← HEARTBEAT from SYS#{hb.get_srcSystem()}, COMP#{hb.get_srcComponent()}\n")
-    else:
-        print("⚠️ No HEARTBEAT—sending a PING to check link…")
-        # time stamp in μs, seq=0, target on broadcast
-        master.mav.ping_send(int(time.time() * 1e6), 0, 0, 0)
-        ping = master.recv_match(type='PING', blocking=True, timeout=TIMEOUT_S)
-        if ping:
-            print("← PING response received. Link is up!\n")
-        else:
-            print("❌ No PING response either. Check your wiring / port / baud.\n")
-
-    print("Listening for TRAFFIC_REPORT (ID 246)…\nPress Ctrl-C to exit.\n")
+while True:
     try:
-        while True:
-            msg = master.recv_match(type='TRAFFIC_REPORT', blocking=True)
-            if msg:
-                decode_and_print(msg)
+        msg = master.recv_match(type='TRAFFIC_REPORT', blocking=True)
+        if msg:
+            icao = msg.ICAO_address
+            lat = msg.lat / 1e7
+            lon = msg.lon / 1e7
+            alt = msg.altitude / 1e3
+            hdg = msg.heading / 1e2
+            hvel = msg.hor_velocity / 1e2
+            vvel = msg.ver_velocity / 1e2
+            squawk = msg.squawk
+            alt_type = msg.altitude_type
+            callsign = msg.callsign.decode('utf-8', 'ignore').strip('\x00')
+            emitter = msg.emitter_type
+            tslc = msg.tslc
+            flags = msg.valid_flags
+
+            print(f"[{icao:08X}] {callsign}")
+            print(f"  Lat/Lon: {lat:.6f}, {lon:.6f}")
+            print(f"  Alt: {alt:.1f} m | Heading: {hdg:.1f}°")
+            print(f"  Velocity: H {hvel:.1f} m/s, V {vvel:.1f} m/s")
+            print(f"  Squawk: {squawk:04o} | AltType: {alt_type} | Emitter: {emitter}")
+            print(f"  Flags: 0x{flags:04X} | Last Seen: {tslc}s ago")
+            print("-" * 40)
     except KeyboardInterrupt:
-        print("\nExiting live mode.")
-        sys.exit(0)
-
-def test_mode(args):
-    """
-    Build a fake TRAFFIC_REPORT in-memory, pack it to raw bytes,
-    then feed those bytes back through a fresh MAVLink parser.
-    """
-    print("=== TEST MODE: Generating & parsing one sample TRAFFIC_REPORT ===\n")
-
-    # Create a bare-MAVLink instance (no I/O) just to encode our sample:
-    mav = MAVLink(None)
-
-    # Fill in some plausible test values:
-    sample = mav.traffic_report_encode(
-        time_usec      = int(time.time() * 1e6),
-        ICAO_address   = 0xABCD1234,
-        lat            = int(37.7749 * 1e7),     # 37.7749°
-        lon            = int(-122.4194 * 1e7),   # -122.4194°
-        altitude       = int(1200 * 1e3),        # 1,200 m
-        heading        = int(45.5 * 100),        # 45.5°
-        hor_velocity   = int(30.2 * 100),        # 30.2 m/s
-        ver_velocity   = int(-1.5 * 100),        # –1.5 m/s
-        valid_flags    = 0x000F,                 # lat/lon/alt/heading valid
-        squawk         = 0o7777,
-        altitude_type  = 1,                      # GEOMETRIC
-        callsign       = b'TEST123\x00',
-        emitter_type   = 5,                      # HEAVY_TYPE
-        tslc           = 10
-    )
-
-    # pack() returns the full MAVLink wire-format frame:
-    raw = sample.pack(mav)
-    print(f"Raw bytes (hex): {raw.hex()}\n")
-
-    # Now feed them into a fresh parser:
-    parser = mavutil.mavlink_connection(
-        'dummy',    # no real port
-        source_system=255,
-        dialect='common'
-    )
-    # override its timeout so parsing chars won't block
-    parser.timeout = 0
-
-    print("Feeding raw bytes back into the parser…")
-    for b in raw:
-        parser.mav.parse_char(b)
-
-    # Try to pull out the decoded message:
-    msg = parser.recv_match(type='TRAFFIC_REPORT', blocking=False)
-    if msg:
-        print("\nDecoded message:")
-        decode_and_print(msg)
-    else:
-        print("❌ Test message did not parse!")
-
-if __name__ == '__main__':
-    p = argparse.ArgumentParser(
-        description="MAVLink TRAFFIC_REPORT (ID 246) listener + test harness"
-    )
-    p.add_argument(
-        '--test', action='store_true',
-        help="run in self-test mode (no serial) to generate & decode one sample"
-    )
-    args = p.parse_args()
-
-    if args.test:
-        test_mode(args)
-    else:
-        live_mode(args)
+        print("Exiting...")
+        break
